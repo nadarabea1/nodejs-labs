@@ -1,5 +1,6 @@
 const http = require('http');
 const fs = require('fs');
+const path = require('path');
 
 http.createServer((req, res) => {
     if (req.method === 'GET') {
@@ -7,7 +8,8 @@ http.createServer((req, res) => {
             case '/':
             case '/Client-Side/Pages/index.html':
             case '/index.html':
-                fs.readFile('./Client-Side/Pages/index.html', (err, data) => {
+                console.log(__dirname);
+                fs.readFile(path.join(__dirname, '../Client-Side/Pages/index.html'), (err, data) => {
                     if (err) {
                         res.writeHead(404, { 'Content-Type': 'text/html' });
                         return res.end("404 Not Found");
@@ -30,40 +32,17 @@ http.createServer((req, res) => {
             phone = userData.split('&')[3].split('=')[1];
         })
 
-        fs.readFile('./clients.json', (err, clientsData) => {
-            if (err) {
-                console.error(err);
-                return;
-            }
-
-            let clients = [];
-            try {
-                clients = JSON.parse(clientsData);
-            } catch (error) {
-                console.error(error);
-            }
-
-            clients.push(clientData);
-
-            fs.writeFile('./clients.json', '[]', { flag: 'wx' }, (err) => {
-                if (err) {
-                    console.error(err);
-                    return;
-                }
-                console.log('Client data saved successfully');
-            });
-        })
 
         switch (req.url) {
             case '/profile.html':
             case '/Client-Side/Pages/profile.html':
-                fs.readFile('./Client-Side/Pages/profile.html', (err, data) => {
+                fs.readFile(path.join(__dirname, '../Client-Side/Pages/profile.html'), (err, data) => {
                     if (err) {
                         res.writeHead(404, { 'Content-Type': 'text/html' });
                         return res.end("404 Not Found");
                     }
                     res.writeHead(200, { 'Content-Type': 'text/html' });
-                    var file = data.toString().replace('{name}', name)
+                    var file = data.toString().replaceAll('{name}', name)
                     file = file.replace('{MobileNumber}', phone)
                     file = file.replace('{Email}', email)
                     file = file.replace('{Address}', address)
